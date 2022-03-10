@@ -1,8 +1,54 @@
-import aiogram
+import asyncio
+import logging
 
-def print_hi(name):
-    print(f'Hi, {name}')
+from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
+from app.config_reader import load_config
+from app.handlers.teacher import register_handlers_drinks
+from app.handlers.student import register_handlers_food
+from app.handlers.common import register_handlers_common
+
+logger = logging.getLogger(__name__)
+
+
+async def set_commands(bot: Bot):
+    commands = [
+        BotCommand(command="/teacher", description="Если вы преподаватель"),
+        BotCommand(command="/student", description="Если вы студент"),
+        BotCommand(command="/cancel", description="Отменить текущее действие")
+    ]
+    await bot.set_my_commands(commands)
+
+
+async def main():
+    # Настройка логирования в stdout
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    )
+    logger.info("Starting bot")
+
+    # Парсинг файла конфигурации
+    config = load_config("config/bot.ini")
+
+    # Объявление и инициализация объектов бота и диспетчера
+    bot = Bot(token=config.tg_bot.token)
+    dp = Dispatcher(bot, storage=MemoryStorage())
+
+    # Регистрация хэндлеров
+    register_handlers_common(dp, config.tg_bot.admin_id)
+    register_handlers_drinks(dp)
+    register_handlers_food(dp)
+
+    # Установка команд бота
+    await set_commands(bot)
+
+    # Запуск поллинга
+    # await dp.skip_updates()  # пропуск накопившихся апдейтов (необязательно)
+    await dp.start_polling()
 
 
 if __name__ == '__main__':
-    print_hi('all will be ok')
+    asyncio.run(main())
