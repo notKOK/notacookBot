@@ -9,6 +9,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
         "Выберите, кто вы(/student) или (/teacher)",
         reply_markup=types.ReplyKeyboardRemove()
     )
+    await (message.answer(message.from_user.id))
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):

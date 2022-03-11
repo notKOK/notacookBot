@@ -6,8 +6,8 @@ from aiogram.types import BotCommand
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from app.config_reader import load_config
-from app.handlers.teacher import register_handlers_drinks
-from app.handlers.student import register_handlers_food
+from app.handlers.teacher import register_handlers_teacher
+from app.handlers.student import register_handlers_student
 from app.handlers.common import register_handlers_common
 
 logger = logging.getLogger(__name__)
@@ -39,14 +39,14 @@ async def main():
 
     # Регистрация хэндлеров
     register_handlers_common(dp, config.tg_bot.admin_id)
-    register_handlers_drinks(dp)
-    register_handlers_food(dp)
+    register_handlers_teacher(dp)
+    register_handlers_student(dp)
 
     # Установка команд бота
     await set_commands(bot)
 
     # Запуск поллинга
-    # await dp.skip_updates()  # пропуск накопившихся апдейтов (необязательно)
+    await dp.skip_updates()  # пропуск накопившихся апдейтов (необязательно)
     await dp.start_polling()
 
 

@@ -44,7 +44,7 @@ async def test_chosen(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-def register_handlers_food(dp: Dispatcher):
+def register_handlers_student(dp: Dispatcher):
     dp.register_message_handler(student_start, commands="student", state="*")
     dp.register_message_handler(action_chosen, state=StudentActions.waiting_for_action)
     dp.register_message_handler(test_chosen, state=StudentActions.waiting_for_test)
