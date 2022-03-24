@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text, IDFilter
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer(
-        "Выберите, кто вы(/student) или (/teacher)",
+        "Выберите, кто вы студент или преподаватель",
         reply_markup=types.ReplyKeyboardRemove()
     )
     await (message.answer(message.from_user.id))

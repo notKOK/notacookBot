@@ -2,3 +2,4 @@
 /config/bot.ini
 /.idea
 __pycache__
+mydb.db

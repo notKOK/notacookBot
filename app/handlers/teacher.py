@@ -1,13 +1,18 @@
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+
 from app.config_reader import load_config
+from app.models.User import *
+
+db.connect()
+db.create_tables([User])
 
 config = load_config("config/bot.ini")
 
 available_actions = ["статистика", "загрузить статистику", "загрузить новый тест"]
 available_smth = ["empty"]
-existing_names = [config.tg_bot.admin_id]  # вот сюда вытягивать из бд,которые есть
+existing_names = {config.tg_bot.admin_id}  # вот сюда вытягивать из бд,которые есть
 
 
 class TeacherMoves(StatesGroup):
@@ -17,10 +22,12 @@ class TeacherMoves(StatesGroup):
 
 
 async def enter_name(message: types.Message):
-    if message.from_user.id in existing_names:  # вот функция для теста, в с ней можно тупо сравнить, что из бд
-        # приходит, что нужно
-        await message.answer("Коля, ты молодец")  # чтобы сюда попасть, /action
-        # тут же реализовать штуку, которая будет новые имена в бд собирать
+    try:
+        user = User.get(User.id == message.from_user.id)
+        await message.answer(user.id)
+    except DoesNotExist:
+        User.create(id=message.from_user.id, firstname="dlfjak", secondname="asdf")
+        await message.answer("Хаю хай")
 
 
 async def action_start(message: types.Message):
