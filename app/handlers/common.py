@@ -2,14 +2,18 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text, IDFilter
 
+available_types = ["Студент", "Преподаватель"]
+
 
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for name in available_types:
+        keyboard.add(name)
     await message.answer(
         "Выберите, кто вы студент или преподаватель",
-        reply_markup=types.ReplyKeyboardRemove()
+        reply_markup=keyboard
     )
-    await (message.answer(message.from_user.id))
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):

@@ -2,6 +2,7 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
+from aiogram.dispatcher.filters import Text
 from app.config_reader import load_config
 from app.models.User import *
 
@@ -12,7 +13,7 @@ config = load_config("config/bot.ini")
 
 available_actions = ["статистика", "загрузить статистику", "загрузить новый тест"]
 available_smth = ["empty"]
-existing_names = {config.tg_bot.admin_id}  # вот сюда вытягивать из бд,которые есть
+existing_names = {config.tg_bot.admin_id}
 
 
 class TeacherMoves(StatesGroup):
@@ -27,7 +28,7 @@ async def enter_name(message: types.Message):
         await message.answer(user.id)
     except DoesNotExist:
         User.create(id=message.from_user.id, firstname="dlfjak", secondname="asdf")
-        await message.answer("Хаю хай")
+        await message.answer("Ты в базе")
 
 
 async def action_start(message: types.Message):
@@ -65,6 +66,6 @@ async def another_action_chosen(message: types.Message, state: FSMContext):
 
 def register_handlers_teacher(dp: Dispatcher):
     dp.register_message_handler(action_start, commands="action", state="*")
-    dp.register_message_handler(enter_name, commands="teacher", state="*")
+    dp.register_message_handler(enter_name, Text(equals="Преподаватель", ignore_case=True), state="*")
     dp.register_message_handler(action_chosen, state=TeacherMoves.waiting_for_actions)
     dp.register_message_handler(another_action_chosen, state=TeacherMoves.waiting_for_smth)

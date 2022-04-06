@@ -1,6 +1,8 @@
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher.filters import Text
+
 
 from app.models.User import *
 
@@ -44,6 +46,6 @@ async def test_chosen(message: types.Message, state: FSMContext):
 
 
 def register_handlers_student(dp: Dispatcher):
-    dp.register_message_handler(student_start, commands="student", state="*")
+    dp.register_message_handler(student_start, Text(equals="Студент", ignore_case=True), state="*")
     dp.register_message_handler(action_chosen, state=StudentActions.waiting_for_action)
     dp.register_message_handler(test_chosen, state=StudentActions.waiting_for_test)

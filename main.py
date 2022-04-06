@@ -13,15 +13,6 @@ from app.handlers.common import register_handlers_common
 logger = logging.getLogger(__name__)
 
 
-async def set_commands(bot: Bot):
-    commands = [
-        BotCommand(command="/teacher", description="Если вы преподаватель"),
-        BotCommand(command="/student", description="Если вы студент"),
-        BotCommand(command="/cancel", description="Отменить текущее действие")
-    ]
-    await bot.set_my_commands(commands)
-
-
 async def main():
     # Настройка логирования в stdout
     logging.basicConfig(
@@ -41,9 +32,6 @@ async def main():
     register_handlers_common(dp, config.tg_bot.admin_id)
     register_handlers_teacher(dp)
     register_handlers_student(dp)
-
-    # Установка команд бота
-    await set_commands(bot)
 
     # Запуск поллинга
     await dp.skip_updates()  # пропуск накопившихся апдейтов (необязательно)
